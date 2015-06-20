@@ -4,7 +4,7 @@ $params = require(__DIR__ . '/params.php');
 
 $config = [
     'id' => 'basic',
-    'defaultRoute' => 'site/products',
+    'defaultRoute' => 'product/products',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'components' => [

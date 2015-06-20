@@ -2,27 +2,65 @@
 
 namespace app\models;
 
-/**
- * This is the model class for table "ratings".
- *
- * @property integer $ProdID
- * @property integer $UserID
- * @property integer $Rating
- * @property string $Comment
- */
-class Rating extends \yii\db\ActiveRecord
+use Yii;
+use yii\db\Query;
+use yii\base\Object;
+
+class Rating extends Object
 {
-    public static function tableName()
+    public $ProdID;
+    public $UserID;
+    public $Rating;
+    public $Comment;
+    
+    public static function getRatings($id)
     {
-        return 'ratings';
+        $db = Yii::$app->db;
+        $query = <<<EOT
+SELECT `users`.`Name`, `ratings`.`Rating`, `ratings`.`Comment`
+FROM `users`
+NATURAL JOIN `ratings`
+WHERE `ratings`.`ProdID` = :id;
+EOT;
+        return $db->createCommand($query)
+            ->bindValue(':id', $id)
+            ->queryAll();
     }
-    /**
-     * @inheritdoc
-     */
-    public function rules()
+    
+    public static function average($id)
     {
-        return [
-            [['ProdID', 'UserID', 'Rating', 'Comment'], 'required'],
-        ];
+        return (new Query())->from('ratings')->where([
+            'ProdID' => $id,
+        ])->average('Rating');
+    }
+    
+    public static function sum($id)
+    {
+        return (new Query())->from('ratings')->where([
+            'ProdID' => $id,
+        ])->sum('Rating');
+    }
+    
+    public static function findOne($ProdID, $UserID)
+    {
+        $model = (new Query())->from('ratings')->where([
+            'ProdID' => $ProdID,
+            'UserID' => $UserID,
+        ])->one();
+        
+        if ($model) {
+            return new self($model);
+        } else {
+            return false;
+        }
+    }
+    
+    public function delete()
+    {
+        $db = Yii::$app->db;
+        return $db->createCommand()->delete('ratings', [
+            'ProdID' => $this->ProdID,
+            'UserID' => $this->UserID,
+        ])->execute();
     }
 }

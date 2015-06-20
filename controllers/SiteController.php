@@ -6,12 +6,7 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
-use app\models\Product;
-use app\models\ProductItem;
-use app\models\Rating;
-use app\models\RatingItem;
 use yii\web\Controller;
-use yii\web\NotFoundHttpException;
 
 class SiteController extends Controller
 {
@@ -20,10 +15,10 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout', 'products', 'product'],
+                'only' => ['logout'],
                 'rules' => [
                     [
-                        'actions' => ['logout', 'products', 'product', 'delete'],
+                        'actions' => ['logout'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -33,7 +28,6 @@ class SiteController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'logout' => ['post'],
-                    'delete' => ['post'],
                 ],
             ],
         ];
@@ -46,33 +40,6 @@ class SiteController extends Controller
                 'class' => 'yii\web\ErrorAction',
             ],
         ];
-    }
-    
-    public function actionProducts() 
-    {
-        $model = new ProductItem();
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $model->save();
-            $this->goHome();
-        }
-        $products = ProductItem::getProducts($model);
-        return $this->render('products', [
-            'products' => $products,
-        ]);
-    }
-    
-    public function actionProduct($id)
-    {
-        $product = Product::findOne($id);
-        if (is_null($product)) {
-            throw new NotFoundHttpException('Product does not exist.');
-        }
-        return $this->render('product', [
-            'name' => $product->Name,
-            'rows' => RatingItem::getRatings($id),
-            'avgRating' => Rating::find()->where(['ProdID' => $id])->average('Rating'),
-            'sumRating' => Rating::find()->where(['ProdID' => $id])->sum('Rating'),
-        ]);
     }
 
     public function actionLogin()
@@ -96,17 +63,5 @@ class SiteController extends Controller
         Yii::$app->user->logout();
 
         return $this->goHome();
-    }
-    
-    public function actionDelete($id)
-    {
-        $model = Rating::findOne([
-            'ProdID' => $id, 
-            'UserID' => Yii::$app->user->id
-        ]);
-        if (!is_null($model) && $model->delete()) {
-            $this->goHome();
-        }
-        throw new BadRequestHttpException('Rating does not delete.');
     }
 }

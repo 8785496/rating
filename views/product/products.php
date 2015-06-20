@@ -22,12 +22,12 @@ if (is_null($product->Rating)) {
         <h4>
             <?=
             Html::a(Html::encode($product->Name), 
-                    Url::toRoute(['site/product', 'id' => $product->ProdID]))
+                    Url::toRoute(['product/product', 'id' => $product->ProdID]))
             ?>            
             <?php
-            if (!is_null($product->Rating)) {
+            if (!is_null($product->Rating) && empty($product->errors)) {
                 echo Html::a('Delete Rating', [
-                    'site/delete', 'id' => $product['ProdID']], [
+                    'product/delete', 'id' => $product['ProdID']], [
                         'class' => 'btn btn-xs btn-danger pull-right',
                         'data' => [
                             'confirm' => 'Are you sure you wont to delete this rating?',
@@ -45,7 +45,7 @@ if (is_null($product->Rating)) {
             'options' => ['class' => 'form-horizontal'],
         ]);
         ?>
-        <?= Html::input('hidden', 'ProductItem[ProdID]', $product['ProdID']) ?>
+        <?= Html::input('hidden', 'Product[ProdID]', $product['ProdID']) ?>
         <div class="form-group">
             <div class="col-sm-12">
                 <div>
