@@ -51,21 +51,20 @@ class SiteController extends Controller
     public function actionProducts() 
     {
         $model = new ProductItem();
-        if($model->load(Yii::$app->request->post()) && $model->validate()){
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $model->save();
             $this->goHome();
         }
         $products = ProductItem::getProducts($model);
         return $this->render('products', [
             'products' => $products,
-            'model' => $model
         ]);
     }
     
     public function actionProduct($id)
     {
         $product = Product::findOne($id);
-        if(is_null($product)) {
+        if (is_null($product)) {
             throw new NotFoundHttpException('Product does not exist.');
         }
         return $this->render('product', [
@@ -78,7 +77,7 @@ class SiteController extends Controller
 
     public function actionLogin()
     {
-        if (!\Yii::$app->user->isGuest) {
+        if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
 
@@ -101,21 +100,13 @@ class SiteController extends Controller
     
     public function actionDelete($id)
     {
-        $model = $this->findModel($id);
-        if($model->delete()){
+        $model = Rating::findOne([
+            'ProdID' => $id, 
+            'UserID' => Yii::$app->user->id
+        ]);
+        if (!is_null($model) && $model->delete()) {
             $this->goHome();
         }
         throw new BadRequestHttpException('Rating does not delete.');
-    }
-
-    protected function findModel($id)
-    {
-        $userID = Yii::$app->user->id;
-        $model = Rating::findOne(['ProdID' => $id, 'UserID' => $userID]);
-        if (!is_null($model)) {
-            return $model;
-        } else {
-            throw new NotFoundHttpException('Rating does not exist.');
-        }
     }
 }

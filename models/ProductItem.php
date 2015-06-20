@@ -4,11 +4,6 @@ namespace app\models;
 
 use Yii;
 
-/**
- * Description of ProductItem
- *
- * @author german
- */
 class ProductItem extends \yii\base\Model
 {
     public $ProdID;

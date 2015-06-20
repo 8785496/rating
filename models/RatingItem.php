@@ -2,11 +2,6 @@
 
 namespace app\models;
 
-/**
- * Description of RatingItem
- *
- * @author german
- */
 class RatingItem extends \yii\base\Object
 {
     public static function getRatings($id)

@@ -24,6 +24,6 @@ $this->title = Html::encode($name);
         <?php endforeach ?>
     </tbody>    
 </table>
-Суммарный рейтинг: <?= $sumRating ?>
+Rating summary: <?= $sumRating ?>
 <br>
-Средний рейтинг: <?= $avgRating ?>
+Rating average: <?= $avgRating ?>
